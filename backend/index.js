@@ -1,18 +1,20 @@
-import express, { request } from "express";
-import { PORT, MongoDBURL } from "./config.js";
+import 'dotenv/config'; // 1. Load environment variables at the very top
+import express from "express";
 import mongoose from "mongoose";
 import { Book } from "./models/bookmodels.js";
 import booksRoute from "./routes/booksRoute.js";
 
 const app = express();
 
-// middleware for parsing the request body
+// 2. Use process.env instead of importing from config.js
+const PORT = process.env.PORT || 5555;
+const MongoDBURL = process.env.MONGO_URI;
+
 app.use(express.json());
 
 app.get("/", (req, res) => {
   res.status(234).send("Welcome to my page");
 });
-
 
 app.use('/book', booksRoute);
 
@@ -21,9 +23,9 @@ mongoose
   .then(() => {
     console.log("App connected to database.");
     app.listen(PORT, () => {
-      console.log(`The app is listening ${PORT}`);
+      console.log(`The app is listening on port ${PORT}`);
     });
   })
   .catch((error) => {
-    console.log(error);
+    console.log("Database connection error:", error);
   });

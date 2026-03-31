@@ -1,2 +1,0 @@
-export const PORT = 5555;
-export const MongoDBURL = 'mongodb://daamitmohanty1111_db_user:z08bo79890@ac-mmc5q6z-shard-00-00.kr93bqr.mongodb.net:27017,ac-mmc5q6z-shard-00-01.kr93bqr.mongodb.net:27017,ac-mmc5q6z-shard-00-02.kr93bqr.mongodb.net:27017/?ssl=true&replicaSet=atlas-2c4050-shard-0&authSource=admin&appName=bookstore';
