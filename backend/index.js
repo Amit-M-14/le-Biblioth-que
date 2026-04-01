@@ -1,4 +1,4 @@
-import 'dotenv/config'; // 1. Load environment variables at the very top
+import 'dotenv/config';
 import express from "express";
 import mongoose from "mongoose";
 import { Book } from "./models/bookmodels.js";
