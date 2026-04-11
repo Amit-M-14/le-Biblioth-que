@@ -3,27 +3,25 @@ import BackButton from '../components/BackButton';
 import Spinner from '../components/Spinner';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
 
 const CreateBooks = () => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
-  const [publishYear, setPublishYear] = useState(''); // Fixed spelling
+  const [publishYear, setPublishYear] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleSaveBook = () => {
-    // Construct the data object
     const data = {
       title,
       author,
-      publishYear: Number(publishYear), // Ensure this is a Number
+      publishYear: Number(publishYear), 
     };
 
-    // DEBUGGING: This will show you exactly what is failing
-    console.log("Data being sent to backend:", data);
-
     if (!title || !author || !publishYear) {
-      alert('Please fill all required fields: Title, Author, and Publish Year');
+      enqueueSnackbar('Please fill all required fields', { variant: 'warning' });
       return;
     }
 
@@ -32,48 +30,79 @@ const CreateBooks = () => {
       .post('http://localhost:5555/book', data)
       .then(() => {
         setLoading(false);
+        enqueueSnackbar('Book created successfully', { variant: 'success' });
         navigate('/');
       })
       .catch((error) => {
         setLoading(false);
-        // This log is critical: it shows the backend's specific rejection message
+        enqueueSnackbar('Error creating book', { variant: 'error' });
         console.log("Axios Error Response:", error.response?.data);
-        alert('An error happened. Check the console for the 400 error details.');
       });
   };
 
   return (
-    <div className='p-4'>
+    <div className='p-8 min-h-screen bg-slate-50'>
       <BackButton />
-      <h1 className='text-3xl my-4'>Create Book</h1>
-      {loading ? <Spinner /> : ''}
-      <div className='flex flex-col border-2 border-sky-400 rounded-xl w-[600px] p-4 mx-auto'>
-        <div className='my-4'>
-          <label className='text-xl mr-4 text-gray-500'>Title</label>
-          <input
-            type='text'
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className='border-2 border-gray-500 px-4 py-2 w-full mb-4'
-          />
-          <label className='text-xl mr-4 text-gray-500'>Author</label>
-          <input
-            type='text'
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-            className='border-2 border-gray-500 px-4 py-2 w-full mb-4'
-          />
-          <label className='text-xl mr-4 text-gray-500'>Publish Year</label>
-          <input
-            type='number'
-            value={publishYear}
-            onChange={(e) => setPublishYear(e.target.value)} // Fixed spelling
-            className='border-2 border-gray-500 px-4 py-2 w-full'
-          />
+      
+      <div className='max-w-xl mx-auto'>
+        <h1 className='text-4xl font-extrabold my-8 text-slate-800 tracking-tight text-center'>
+          Add New <span className='text-indigo-600'>Book</span>
+        </h1>
+
+        {loading && <Spinner />}
+
+        <div className='bg-white border border-slate-200 rounded-3xl p-10 shadow-xl relative overflow-hidden'>
+          {/* Decorative accent line */}
+          <div className='absolute top-0 left-0 w-full h-2 bg-indigo-500'></div>
+
+          <div className='space-y-6'>
+            <div>
+              <label className='text-sm font-bold uppercase tracking-widest text-slate-500 mb-2 block'>
+                Book Title
+              </label>
+              <input
+                type='text'
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder='Enter title'
+                className='w-full px-5 py-3 rounded-2xl border border-slate-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all placeholder:text-slate-300'
+              />
+            </div>
+
+            <div>
+              <label className='text-sm font-bold uppercase tracking-widest text-slate-500 mb-2 block'>
+                Author Name
+              </label>
+              <input
+                type='text'
+                value={author}
+                onChange={(e) => setAuthor(e.target.value)}
+                placeholder='Enter author'
+                className='w-full px-5 py-3 rounded-2xl border border-slate-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all placeholder:text-slate-300'
+              />
+            </div>
+
+            <div>
+              <label className='text-sm font-bold uppercase tracking-widest text-slate-500 mb-2 block'>
+                Publish Year
+              </label>
+              <input
+                type='number'
+                value={publishYear}
+                onChange={(e) => setPublishYear(e.target.value)}
+                placeholder='YYYY'
+                className='w-full px-5 py-3 rounded-2xl border border-slate-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all placeholder:text-slate-300'
+              />
+            </div>
+
+            <button 
+              className='w-full mt-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl shadow-lg shadow-indigo-100 transition-all transform active:scale-95'
+              onClick={handleSaveBook}
+            >
+              Add to Collection
+            </button>
+          </div>
         </div>
-        <button className='p-2 bg-sky-300 m-8 text-white font-bold' onClick={handleSaveBook}>
-          Save
-        </button>
       </div>
     </div>
   );

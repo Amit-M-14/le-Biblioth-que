@@ -2,9 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Spinner from "../components/Spinner";
 import { Link } from "react-router-dom";
-import { AiOutlineEdit } from "react-icons/ai";
-import { BsInfoCircle } from "react-icons/bs";
-import { MdOutlineAddBox, MdOutlineDelete } from "react-icons/md";
+import { MdOutlineAddBox } from "react-icons/md";
 import BooksCard from "../components/home/BooksCard";
 import BooksTable from "../components/home/BooksTable";
 
@@ -16,10 +14,9 @@ const Home = () => {
   useEffect(() => {
     setLoading(true);
     axios
-      .get("http://localhost:5555/book") // Match your backend exactly
+      .get("http://localhost:5555/book")
       .then((res) => {
-        // We use res.data.data because your backend sends { count: x, data: books }
-        setBooks(res.data.data); 
+        setBooks(res.data.data);
         setLoading(false);
       })
       .catch((error) => {
@@ -29,34 +26,67 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="p-4">
-      <div className="flex justify-center items-center gap-x-4">
-        <button 
-        className="bg-sky-300" hover:bg-sky-600 px-4 py-1 rounded-1g
-        onClick={() => setShowType('table')}
+    <div className="p-8 max-w-7xl mx-auto min-h-screen bg-slate-50">
+      {/* View Toggle Section */}
+      <div className="flex justify-center items-center gap-x-6 mb-10">
+        <button
+          className={`${
+            showType === 'table' 
+              ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' 
+              : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+          } px-8 py-2 rounded-full font-bold transition-all active:scale-95`}
+          onClick={() => setShowType('table')}
         >
-          Table
+          Table View
         </button>
-        <button 
-        className="bg-sky-300" hover:bg-sky-600 px-4 py-1 rounded-1g
-        onClick={() => setShowType('card')}
+        <button
+          className={`${
+            showType === 'card' 
+              ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' 
+              : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+          } px-8 py-2 rounded-full font-bold transition-all active:scale-95`}
+          onClick={() => setShowType('card')}
         >
-          Card
+          Card View
         </button>
       </div>
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl my-8">Books List</h1>
-        <Link to="/books/create">
-          <MdOutlineAddBox className="text-sky-800 text-4xl" />
+
+      {/* Header Section */}
+      <div className="flex justify-between items-center mb-8 border-b border-slate-200 pb-6">
+        <div>
+          <h1 className="text-4xl font-extrabold text-slate-800 tracking-tight">
+            Book <span className="text-indigo-600">Collection</span>
+          </h1>
+          <p className="text-slate-500 mt-1 font-medium">Manage your personal library</p>
+        </div>
+        
+        <Link to="/books/create" title="Add new book">
+          <div className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-2xl shadow-lg shadow-emerald-100 transition-all active:scale-95">
+            <MdOutlineAddBox className="text-2xl" />
+            <span className="font-bold">Add Book</span>
+          </div>
         </Link>
       </div>
-      {loading ? (
-        <Spinner />
-      ) : showType === 'table' ? (
-        <BooksTable books={books}/>
-      ) : (
-        <BooksCard books = {books}/>
+
+      {/* Main Content Area */}
+      <div className="transition-opacity duration-500">
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <Spinner />
+          </div>
+        ) : showType === 'table' ? (
+          <BooksTable books={books} />
+        ) : (
+          <BooksCard books={books} />
         )}
+      </div>
+
+      {/* Empty State Helper */}
+      {!loading && books.length === 0 && (
+        <div className="text-center mt-20">
+          <p className="text-slate-400 text-lg italic">Your library is currently empty.</p>
+        </div>
+      )}
     </div>
   );
 };
